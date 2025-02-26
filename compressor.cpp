@@ -8,6 +8,27 @@
 #include <stdexcept>
 #include <cstring>
 
+struct Node {
+    unsigned char ch;  // only valid for leaf nodes
+    unsigned char byte;
+    int freq;
+    Node *left;
+    Node *right;
+    Node(unsigned char c, int f) : ch(c), freq(f), left(nullptr), right(nullptr) {}
+};
+
+void Compressor::generateCodes(Node* root, const std::string &prefix, std::vector<std::string> &codes){
+    if (!root) return;
+
+    if (!root->left && !root->right){
+        codes[static_cast<unsigned char>(root->ch)] = prefix;
+        return;
+    }
+
+    generateCodes(root->left, prefix + "0", codes);
+    generateCodes(root->right, prefix + "1", codes);
+}
+
 // Constructor
 Compressor::Compressor() {
     // Initialize any resources if needed
@@ -76,7 +97,7 @@ bool Compressor::compress(const std::string &inputFile, const std::string &outpu
 
     // now generate the huffman code table
     std::vector<std::string> codeTable(256);
-    genreateCodes<
+    generateCodes(huffmanTree, "", codeTable);
 
 
     in.close();

@@ -2,6 +2,9 @@
 #define HEADER_H
 
 #include <string>
+#include <vector>
+#include <queue>
+#include <fstream>
 
 class Compressor {
 public:
@@ -34,8 +37,46 @@ public:
 
 private:
     // You can add private helper functions or member variables here
+    Node* huffmanTreeRoot;
+    std::vector<std::string> codeTable;
 
-    
+    // Recursively generate Huffman codes from the tree.
+    void generateCodes(Node* root, const std::string &prefix, std::vector<std::string> &codes) {
+        if (!root) return;
+        // Leaf node: record the code.
+        if (!root->left && !root->right) {
+            codes[static_cast<int>(root->byte)] = prefix;
+            return;
+        }
+        generateCodes(root->left, prefix + "0", codes);
+        generateCodes(root->right, prefix + "1", codes);
+    }
+
+    // Free the Huffman tree.
+    void freeTree(Node* root) {
+        if (!root) return;
+        freeTree(root->left);
+        freeTree(root->right);
+        delete root;
+    }
+
+    // build huffman tree given the frequency table, frequency table should have 256 elements
+    Node* buildHuffmanTree(const std::vector<int>& frequencies);
+
+    // build frequency table from the input file, returns a vector of 256 elements
+    std::vector<int> buildFrequencyTable(const std::string &data);
+
+    // encode the input data using the code table, returns the encoded data
+    std::string encodeData(const std::string &data, const std::vector<std::string> &codes);
+
+    // decode the encoded data using the code table, returns the decoded data
+    std::string decodeData(const std::string &encodedata, Node* root);
+
+    // write the code table to the output file
+    bool writeCodeTable(const std::vector<std::string> &codes, std::ofstream &out);
+
+    // read the code table from the input file
+    bool readCodeTable(std::ifstream &in, std::vector<std::string> &codes);
 };
 
 #endif // HEADER_H

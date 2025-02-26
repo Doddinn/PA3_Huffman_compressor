@@ -9,19 +9,18 @@
 #include <cstring>
 
 struct Node {
-    unsigned char ch;  // only valid for leaf nodes
     unsigned char byte;
     int freq;
     Node *left;
     Node *right;
-    Node(unsigned char c, int f) : ch(c), freq(f), left(nullptr), right(nullptr) {}
+    Node(unsigned char byte, int freq) : byte(byte), freq(freq), left(nullptr), right(nullptr) {}
 };
 
 void Compressor::generateCodes(Node* root, const std::string &prefix, std::vector<std::string> &codes){
     if (!root) return;
 
     if (!root->left && !root->right){
-        codes[static_cast<unsigned char>(root->ch)] = prefix;
+        codes[static_cast<unsigned char>(root->byte)] = prefix;
         return;
     }
 

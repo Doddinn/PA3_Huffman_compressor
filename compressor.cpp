@@ -31,11 +31,17 @@ void Compressor::generateCodes(Node* root, const std::string &prefix, std::vecto
 // Constructor
 Compressor::Compressor() {
     // Initialize any resources if needed
+    std::cout << "Compressor object created" << std::endl;
 }
 
 // Destructor
 Compressor::~Compressor() {
     // Clean up any resources if needed
+    if (huffmanTreeRoot){
+        freeTree(huffmanTreeRoot);
+        huffmanTreeRoot = nullptr;
+    }
+    std::cout << "Compressor object destroyed" << std::endl;
 }
 
 

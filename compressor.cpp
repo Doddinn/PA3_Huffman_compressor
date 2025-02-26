@@ -111,6 +111,42 @@ bool Compressor::compress(const std::string &inputFile, const std::string &outpu
         out.write(reinterpret_cast<const char*>(&freq[i]), sizeof(int));
     }
 
+    // read input again, encode using the code table and pack bits into bytes
+    std::string bitString;
+    while (in.get(byte)) {
+        unsigned char ch = static_cast<unsigned char>(byte);
+        bitString += codeTable[ch];
+        // write out bytes as soon as we have at least 8 bits
+        while (bitString.size() >= 8) {
+            std::string byteString = bitString.substr(0, 8);
+            bitString.erase(0, 8);
+            //convert 8 bit string to a single byte
+            uint8_t outByte = 0;
+            for (int i = 0; i < 8; i++) {
+                outByte = (outByte << 1) | byteString[i] - '0';
+            }
+            out.write(reinterpret_cast<const char*>(&outByte), sizeof(uint8_t));
+        }
+    }
+
+    // if any bits remain, pad them to form a full byte
+    int padding = 0;
+    if (!bitString.empty()) {
+        padding = 8 - bitString.size();
+        // pad with zeros
+        bitString.append(padding, '0');
+        uint8_t outByte = 0;
+        for (int i = 0; i < 8; i++) {
+            outByte = (outByte << 1) | (bitString[i] - '0');
+        }
+        out.write(reinterpret_cast<const char*>(&outByte), sizeof(uint8_t));
+    }
+
+    // write the padding to the output file so that the decompressor can remove it
+    out.write(reinterpret_cast<const char*>(&padding), sizeof(int));
+
+    // clean up
+    freeTree(huffmanTree);
     in.close();
     out.close();
     return true;

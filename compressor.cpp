@@ -105,6 +105,12 @@ bool Compressor::compress(const std::string &inputFile, const std::string &outpu
     generateCodes(huffmanTree, "", codeTable);
 
 
+    // write header.. in this case  what is written is the freq table 256 integers
+    // the decompressor can rebuild the tree using the tree fro mthe table
+    for (int i = 0; i < 256; i++){
+        out.write(reinterpret_cast<const char*>(&freq[i]), sizeof(int));
+    }
+
     in.close();
     out.close();
     return true;

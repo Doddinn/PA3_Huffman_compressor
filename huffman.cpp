@@ -1,5 +1,7 @@
 #include "huffman.h"
 
+
+
 // Node constructor implementation.
 Node::Node(char character, int frequency) 
     : ch(character), freq(frequency), left(nullptr), right(nullptr) {}

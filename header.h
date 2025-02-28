@@ -8,15 +8,15 @@
 
 class Compressor {
 public:
-    Compressor();               // Constructor
-    ~Compressor();              // Destructor
+    Compressor();// Constructor
+    ~Compressor();// Destructor
 
-    // Compresses the input file into the output file.
-    // Returns true on success, false on error.
+    // Compresses the input file into the output file
+    // returns true on success, false on error
     bool compress(const std::string &inputFile, const std::string &outputFile);
 
-    // Decompresses the input file into the output file.
-    // Returns true on success, false on error.
+    // Decompresses the input file into the output file
+    // returns true on success, false on error
     bool decompress(const std::string &inputFile, const std::string &outputFile);
 
     struct Node {
@@ -34,14 +34,13 @@ public:
     };
 
 private:
-    // You can add private helper functions or member variables here
     Node* huffmanTreeRoot;
     std::vector<std::string> codeTable;
 
     // Recursively generate Huffman codes from the tree.
     void generateCodes(Node* root, const std::string &prefix, std::vector<std::string> &codes) {
         if (!root) return;
-        // Leaf node: record the code.
+        // leaf node: record the code
         if (!root->left && !root->right) {
             codes[static_cast<int>(root->byte)] = prefix;
             return;

@@ -1,12 +1,9 @@
 #include "header.h"
 #include <iostream>
-#include <fstream>
-#include <vector>
 #include <queue>
-#include <string>
 #include <cstdint>
-#include <stdexcept>
-#include <cstring>
+
+
 
 struct Node {
     unsigned char byte;
@@ -16,17 +13,6 @@ struct Node {
     Node(unsigned char byte, int freq) : byte(byte), freq(freq), left(nullptr), right(nullptr) {}
 };
 
-void Compressor::generateCodes(Node* root, const std::string &prefix, std::vector<std::string> &codes){
-    if (!root) return;
-
-    if (!root->left && !root->right){
-        codes[static_cast<unsigned char>(root->byte)] = prefix;
-        return;
-    }
-
-    generateCodes(root->left, prefix + "0", codes);
-    generateCodes(root->right, prefix + "1", codes);
-}
 
 // Constructor
 Compressor::Compressor() {
@@ -123,7 +109,7 @@ bool Compressor::compress(const std::string &inputFile, const std::string &outpu
             //convert 8 bit string to a single byte
             uint8_t outByte = 0;
             for (int i = 0; i < 8; i++) {
-                outByte = (outByte << 1) | byteString[i] - '0';
+                outByte = (outByte << 1) | (byteString[i] - '0');
             }
             out.write(reinterpret_cast<const char*>(&outByte), sizeof(uint8_t));
         }
@@ -165,9 +151,6 @@ bool Compressor::decompress(const std::string &inputFile, const std::string &out
         return false;
     }
 
-    // TODO: Implement your decompression logic here.
-    // Typically, you'll read the header (e.g., the code table) first,
-    // rebuild the Huffman tree, and then decode the rest of the file.
 
     in.close();
     out.close();
